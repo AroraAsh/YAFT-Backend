@@ -4,6 +4,10 @@ var express = require('express'),
   mongoose = require('mongoose'),
   bodyParser = require('body-parser');
 
+mongoose.connect("mongodb://localhost:27017/fitness-db", {useNewUrlParser: true, useUnifiedTopology: true})
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'))
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
