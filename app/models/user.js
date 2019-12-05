@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -16,7 +16,21 @@ const userSchema = new mongoose.Schema({
   },
   gender: {
     type: String
-  }
+  },
+  friendList:[{type:Schema.Types.ObjectId, ref:'User'}],
+  awards:[{
+    name:{
+      type:String
+    },
+    desc:{
+      type:String
+    },
+    activityType:{
+      type:String,
+      enum: Object.values(ActivityType)
+    },
+
+  }]
 });
 
 userSchema.static.findByLogin = async function(login){
