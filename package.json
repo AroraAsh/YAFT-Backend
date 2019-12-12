@@ -2,13 +2,19 @@
   "name": "fitness-app-backend",
   "version": "1.0.0",
   "description": "Backend for an app for tracking your fitness activities.",
-  "main": "index.js",
+  "main": "server.js",
   "repository": "git@git.rwth-aachen.de:iptk/ws19-20/team-charlie/backend.git",
-  "author": "Neoamos <aonews@gmail.com>",
+  "author": "Team Charlie IPTK",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^3.0.7",
+    "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
-    "mongoose": "^5.7.9"
+    "express-session": "^1.17.0",
+    "mongoose": "^5.7.9",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "passport-remember-me": "^0.0.1"
   },
   "devDependencies": {
     "nodemon": "^1.19.4"

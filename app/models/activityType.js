@@ -1,3 +1,6 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
 const ActivityType = Object.freeze({
     Walking: 'walking',
     Cycling: 'cycling',
@@ -5,3 +8,5 @@ const ActivityType = Object.freeze({
     Swimming: 'swimming',
     Sleeping: 'sleeping'
 })
+
+exports = ActivityType;
