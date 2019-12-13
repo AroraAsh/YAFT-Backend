@@ -21,7 +21,7 @@ To run the server run 'node server.js'.  You can also run 'nodemon server.js' in
 
 POST /login
 
-Parameters: email, password
+Parameters: email, password, remember_me
 
 GET /logout
 
