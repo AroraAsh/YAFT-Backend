@@ -26,10 +26,10 @@ module.exports = function(app){
   app.route('/logout')
     .get([protectedURL, userController.logout])
 
-  app.route('/register')
+  app.route('/user/register')
     .post(userController.register)
 
-  app.route('/profile')
+  app.route('/user/profile')
     .get(userController.profile)
 
   app.route('/user/password')

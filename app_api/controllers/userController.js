@@ -152,7 +152,7 @@ exports.updateUser = async function(req, res){
         errors[key] = e.errors[key].message
       })
     }
-    res.json({
+    return res.json({
       status: "error",
       message: e.message,
       errors: errors
@@ -178,13 +178,13 @@ exports.updatePassword = async function(req, res){
 
 exports.profile = async function(req, res){
   if(!req.user){
-    res.json({
+    return res.json({
       status: "error",
       message: "You are not logged in"
     })
   }
 
-  res.json({
+  return res.json({
     status: "success",
     result:{
       name: req.user.name,
