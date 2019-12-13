@@ -6,9 +6,12 @@ module.exports = function(app){
 
   function protectedURL(req, res, next){
     if(!req.user){
-      return res.json({
+      res.json({
+        status: "error",
         message: "You must be logged in to access this page."
-      })
+      });
+      res.end()
+      return res;
     }
 
     next();
@@ -30,7 +33,7 @@ module.exports = function(app){
     .post(userController.register)
 
   app.route('/user/profile')
-    .get(userController.profile)
+    .get([protectedURL, userController.profile])
 
   app.route('/user/password')
     .post([protectedURL, userController.updatePassword])

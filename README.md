@@ -15,3 +15,26 @@ server.js - The entry point of our application
 # Runnning
 
 To run the server run 'node server.js'.  You can also run 'nodemon server.js' in development for automatic code reloading.
+
+
+# API Specification
+
+POST /login
+
+Parameters: email, password
+
+GET /logout
+
+POST /user/register
+
+Parameters: name, email, password, age, gender
+
+GET /user/profile
+
+POST /user/password
+
+Parameters: oldPassword, newPassword
+
+POST /user/update
+
+Parameters: name, age, gender

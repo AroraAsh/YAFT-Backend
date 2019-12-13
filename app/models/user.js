@@ -129,7 +129,9 @@ userSchema.statics.update = async function(email, userUpdate){
   }
 
   Object.keys(userUpdate).forEach(function(key, index){
-    user[key] = userUpdate[key];
+    if(userUpdate[key]){
+      user[key] = userUpdate[key];
+    }
   })
 
   return await user.save()

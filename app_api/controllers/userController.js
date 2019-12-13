@@ -13,6 +13,7 @@ passport.deserializeUser(function(user, done) {
 });
 
 passport.use(new LocalStrategy(
+  {usernameField: 'email'},
   function(username, password, done) {
       Models.User.login(username, password).then(function(user){
         if(!user){
@@ -138,7 +139,8 @@ exports.updateUser = async function(req, res){
   }
 
   await Models.User.update(req.user.email, userUpdate)
-  .then(function(ret){
+  .then(function(user){
+    req.session.passport.user = user;
     res.json({
       status: "success",
       message: "Successfully updated your profile"
