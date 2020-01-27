@@ -62,6 +62,14 @@ activitySchema.statics.insert = async function(activityAttributes){
     return await activity.save();
 }
 
+activitySchema.statics.getByTime = async function(start, end, userID){
+    return await this.find({
+        userID: userID, 
+        startDateTime: { $lte: end}, 
+        endDateTime: { $gte: start }
+    })
+}
+
 
 const Activity = mongoose.model('Activity',activitySchema)
 module.exports = Activity

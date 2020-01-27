@@ -36,5 +36,28 @@ exports.update = async function(req, res, next){
 }
 
 exports.getByTime = async function(req, res, next){
-  
+  var start = Date.parse(req.query.start);
+  var end = Date.parse(req.query.end);
+
+  if(isNaN(start) || isNaN(end)){
+    return res.json({
+      status: "error",
+      message: "Start or end date was formatted incorrectly"
+    })
+  }
+
+  await Models.Activity.getByTime(start, end, req.user._id)
+  .then(function(activities){
+    return res.json({
+      status: "success",
+      activities: activities
+    })
+  })
+  .catch(function(e){
+    return res.json({
+      status: "error",
+      message: e.message
+    })
+  })
+    
 }

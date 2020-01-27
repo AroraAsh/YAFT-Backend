@@ -45,4 +45,6 @@ Parameters: name, activityType, startDateType (yyyy-mm-dd hh:mm:ss or whatever J
 
 POST /activity/update (not implemented yet)
 
-GET /activities/get_by_time (not implemented yet)
+GET /activities/get_by_time 
+
+Parameters: start (date), end (date)
