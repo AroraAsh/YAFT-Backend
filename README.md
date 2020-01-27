@@ -38,3 +38,11 @@ Parameters: oldPassword, newPassword
 POST /user/update
 
 Parameters: name, age, gender
+
+POST /activity/insert
+
+Parameters: name, activityType, startDateType (yyyy-mm-dd hh:mm:ss or whatever Javascript Date.parse() can take), endDateTime, duration, caloriesBurned, distance
+
+POST /activity/update (not implemented yet)
+
+GET /activities/get_by_time (not implemented yet)

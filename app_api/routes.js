@@ -3,6 +3,7 @@
 module.exports = function(app){
   var helloWorldController = require('./controllers/helloWorldController.js')
   var userController = require('./controllers/userController.js')
+  var activityController = require('./controllers/activityController.js')
 
   function protectedURL(req, res, next){
     if(!req.user){
@@ -40,4 +41,14 @@ module.exports = function(app){
   
   app.route('/user/update')
     .post([protectedURL, userController.updateUser])
+
+
+  app.route('/activity/insert')
+    .post([protectedURL, activityController.insert])
+
+  app.route('/activity/update')
+    .post([protectedURL, activityController.update])
+
+  app.route('/activities/get_by_time')
+    .get([protectedURL, activityController.getByTime])
 }

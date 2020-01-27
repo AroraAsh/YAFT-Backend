@@ -7,7 +7,6 @@ exports.hello = function(req, res){
 }
 
 exports.helloUser = function(req, res){
-  console.log(req.session)
   if(req.user){
     res.json({
       message: "Hello " + req.user.name

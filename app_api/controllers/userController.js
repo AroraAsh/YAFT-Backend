@@ -52,11 +52,13 @@ exports.login = function(req, res, next){
     if (err) { return next(err); }
 
     if(!user){
-      res.json({
+      return res.json({
         status: "error",
         message: "Failed to log in"
       })
     }
+
+    console.log("sdf")
 
     req.logIn(user, async function(err) {
       if (err) { return next(err); }
@@ -179,13 +181,6 @@ exports.updatePassword = async function(req, res){
 }
 
 exports.profile = async function(req, res){
-  if(!req.user){
-    return res.json({
-      status: "error",
-      message: "You are not logged in"
-    })
-  }
-
   return res.json({
     status: "success",
     result:{

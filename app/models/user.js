@@ -91,7 +91,7 @@ userSchema.statics.loginByToken = async function(token){
   if(match){
     return user
   }else{
-    return new Error("Token does not match")
+    throw new Error("Token does not match")
   }
 }
 
