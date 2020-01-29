@@ -58,7 +58,6 @@ exports.login = function(req, res, next){
       })
     }
 
-    console.log("sdf")
 
     req.logIn(user, async function(err) {
       if (err) { return next(err); }
