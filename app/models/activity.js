@@ -30,7 +30,17 @@ const activitySchema = new mongoose.Schema({
         min:0,
         default: 0
     },
-    calories: {
+    caloriesBurned: {
+        type:Number,
+        min:0,
+        default: 0
+    },
+    stepCount: {
+        type:Number,
+        min:0,
+        default: 0
+    },
+    duration: {
         type:Number,
         min:0,
         default: 0
