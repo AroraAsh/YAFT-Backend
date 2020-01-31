@@ -22,7 +22,7 @@ const activitySchema = new mongoose.Schema({
     },
     activityType:{
         type:String,
-        enum: ['walking', 'running', 'cycling', 'vehicle', 'sleeping'],
+        enum: Object.values(ActivityType),
         required: [true, "Activity must have a type"]
     },
     distance:{

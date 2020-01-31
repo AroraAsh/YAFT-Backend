@@ -4,6 +4,7 @@ module.exports = function(app){
   var helloWorldController = require('./controllers/helloWorldController.js')
   var userController = require('./controllers/userController.js')
   var activityController = require('./controllers/activityController.js')
+  var friendController = require('./controllers/friendController.js')
 
   function protectedURL(req, res, next){
     if(!req.user){
@@ -51,4 +52,11 @@ module.exports = function(app){
 
   app.route('/activities/get_by_time')
     .get([protectedURL, activityController.getByTime])
+
+  app.route('/friends/request')
+    .post([protectedURL, friendController.friendRequest])
+
+  app.route('/friends/confirm')
+    .post([protectedURL, friendController.confirmRequest])
+
 }

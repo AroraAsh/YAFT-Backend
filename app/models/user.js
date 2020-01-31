@@ -7,6 +7,11 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+const FriendRequestStatus = Object.freeze({
+  Requested: 'REQ',
+  Accepted: 'ACC',
+});
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -38,7 +43,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["M", "F", "O"]
   },
-  friendList:[{type:Schema.Types.ObjectId, ref:'User'}],
+  friendList:[{
+    friendUserId: {type:Schema.Types.ObjectId, ref:'User'},
+    requestStatus: {
+      type: String,
+      enum: Object.values(FriendRequestStatus)
+    }
+  }
+  ],
   awards:[{
     name:{
       type:String
@@ -151,6 +163,38 @@ userSchema.statics.updatePassword = async function(email, oldPassword, newPasswo
     throw new Error("The old password provided is not correct.")
   }
 }
+
+userSchema.statics.friendRequest = async function(requestFromEmail,requestToEmailId){
+  var user = await this.findOne({email: requestFromEmail})
+  if(!user)
+    throw new Error("User does not exist.")
+  var userRequest = await this.findOne({email: requestToEmailId})
+  if(!user)
+    throw new Error("Requested user does not exist.")
+  user.friendList.push({friendUserId: userRequest._id,status: FriendRequestStatus.Requested})
+  return await user.save();
+}
+
+userSchema.statics.confirmRequest = async function(requestFromEmail,requestToEmailId){
+  
+  var userRequest = await this.findOne({email: requestToEmailId})
+  if(!user)
+    throw new Error("Requested user does not exist.")
+  this.findOne({'friendList':{$elemMatch: {friendUserId: userRequest._id}}},function(err,user){
+
+
+    if(!user)
+      throw new Error("User does not exist.")
+    else{
+      user.update({'friendList.friendUserId': userRequest._id}, {'$set':{
+        'friendList.$.status': FriendRequestStatus.Accepted
+      }})
+      return await user.save();
+    }
+  });
+  
+}
+
 
 var model = mongoose.model('User', userSchema);
 module.exports = model
