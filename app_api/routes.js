@@ -43,6 +43,12 @@ module.exports = function(app){
   app.route('/user/update')
     .post([protectedURL, userController.updateUser])
 
+  app.route('/user/add_weight')
+    .post([protectedURL, userController.addWeight])
+
+  app.route('/user/update_weight')
+    .post([protectedURL, userController.updateWeight])
+
 
   app.route('/activity/insert')
     .post([protectedURL, activityController.insert])
@@ -52,6 +58,9 @@ module.exports = function(app){
 
   app.route('/activities/get_by_time')
     .get([protectedURL, activityController.getByTime])
+
+  app.route('/activities/get_by_id')
+    .get([protectedURL, activityController.getById])
 
   app.route('/friends/request')
     .post([protectedURL, friendController.friendRequest])

@@ -77,7 +77,15 @@ exports.login = function(req, res, next){
           email: req.user.email,
           age: req.user.age,
           gender: req.user.gender,
-          awards: req.user.awards
+          height: req.user.height,
+          stepGoal: req.user.stepGoal,
+          distanceGoal: req.user.distanceGoal,
+          calorieGoal: req.user.calorieGoal,
+          activityGoal: req.user.activityGoal,
+          sleepGoal: req.user.sleepGoal,
+          weights: req.user.weights,
+          awards: req.user.awards,
+          friends: req.user.friendList
         }
       })
     });
@@ -136,7 +144,14 @@ exports.updateUser = async function(req, res){
   var userUpdate = {
     name: req.body.name,
     age: req.body.age,
-    gender: req.body.gender
+    email: req.body.email,
+    gender: req.body.gender,
+    height: req.body.height,
+    stepGoal: req.body.stepGoal,
+    distanceGoal: req.body.distanceGoal,
+    calorieGoal: req.body.calorieGoal,
+    activityGoal: req.body.activityGoal,
+    sleepGoal: req.body.sleepGoal
   }
 
   await Models.User.update(req.user.email, userUpdate)
@@ -159,6 +174,48 @@ exports.updateUser = async function(req, res){
       status: "error",
       message: e.message,
       errors: errors
+    })
+  })
+}
+
+exports.addWeight = async function(req, res){
+  var weight = req.body.weight;
+  var date = req.body.date;
+
+  await Models.User.addWeight(req.user._id, weight, date)
+  .then(function(user){
+    req.session.passport.user = user;
+    return res.json({
+      status: "success",
+      message: "Added weight successuflly."
+    })
+  })
+  .catch(function(e){
+    return res.json({
+      status: "error",
+      message: e.message
+    })
+  })
+}
+
+exports.updateWeight = async function(req, res){
+  var weightId = req.body.weightId;
+  var weight = req.body.weight;
+  var date = req.body.date;
+  var deleteWeight = req.body.delete
+
+  await Models.User.updateWeight(req.user._id, weightId, weight, date, deleteWeight)
+  .then(function(user){
+    req.session.passport.user = user;
+    return res.json({
+      status: "success",
+      message: "Updated weight successuflly."
+    })
+  })
+  .catch(function(e){
+    return res.json({
+      status: "error",
+      message: e.message
     })
   })
 }
@@ -187,7 +244,15 @@ exports.profile = async function(req, res){
       email: req.user.email,
       age: req.user.age,
       gender: req.user.gender,
-      awards: req.user.awards
+      height: req.user.height,
+      stepGoal: req.user.stepGoal,
+      distanceGoal: req.user.distanceGoal,
+      calorieGoal: req.user.calorieGoal,
+      activityGoal: req.user.activityGoal,
+      sleepGoal: req.user.sleepGoal,
+      weights: req.user.weights,
+      awards: req.user.awards,
+      friends: req.user.friendList
     }
   })
 }

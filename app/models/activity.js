@@ -22,7 +22,8 @@ const activitySchema = new mongoose.Schema({
     },
     activityType:{
         type:String,
-        enum: Object.values(ActivityType),
+        // Note: If we use Object.values(ActivityType) the validation doesnt work for some reason
+        enum: ['WALKING','BICYCLE','RUNNING','VEHICLE','SLEEP'],
         required: [true, "Activity must have a type"]
     },
     distance:{
@@ -72,11 +73,36 @@ activitySchema.statics.insert = async function(activityAttributes){
     return await activity.save();
 }
 
+activitySchema.statics.update = async function(userId, activityId, activityUpdate){
+    var activity = await this.findOne({ _id: activityId, userID: userId})
+    if(!activity){
+      throw new Error("Activity does not exist or does not belong to this user")
+    }
+
+    Object.keys(activityUpdate).forEach(function(key, index){
+        if(activityUpdate[key]){
+          activity[key] = activityUpdate[key];
+        }
+      })
+
+    await activity.validate();
+
+    return await activity.save();
+}
+
+
 activitySchema.statics.getByTime = async function(start, end, userID){
     return await this.find({
         userID: userID, 
         startDateTime: { $lte: end}, 
         endDateTime: { $gte: start }
+    })
+}
+
+activitySchema.statics.getById = async function(activityId, userID){
+    return await this.find({
+        userID: userID, 
+        _id: activityId
     })
 }
 

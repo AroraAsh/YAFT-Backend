@@ -43,6 +43,41 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["M", "F", "O"]
   },
+  height: {
+    type: Number,
+    min: [0, "Height must be over 0"]
+  },
+  stepGoal: {
+    type: Number,
+    min: [0, "Goal must be over 0"]
+  },
+  distanceGoal: {
+    type: Number,
+    min: [0, "Goal must be over 0"]
+  },
+  calorieGoal: {
+    type: Number,
+    min: [0, "Goal must be over 0"]
+  },
+  activityGoal: {
+    type: Number,
+    min: [0, "Goal must be over 0"]
+  },
+  sleepGoal: {
+    type: Number,
+    min: [0, "Goal must be over 0"]
+  },
+  weights: [
+    {
+      weight:{
+        type: Number,
+        min: [0, "Weight must be over 0"]
+      },
+      date: {
+        type: Date
+      }
+    }
+  ],
   friendList:[{
     friendUserId: {type:Schema.Types.ObjectId, ref:'User'},
     requestStatus: {
@@ -146,7 +181,49 @@ userSchema.statics.update = async function(email, userUpdate){
     }
   })
 
+  await user.validate()
+
   return await user.save()
+}
+
+userSchema.statics.addWeight = async function(userID, weight, date){
+  var user =  await this.findOne({ _id: userID})
+  if(!user){
+    throw new Error("User does not exist")
+  }
+
+  user.weights.push({weight: weight, date: date})
+
+  await user.validate();
+
+  return await user.save()
+
+}
+
+userSchema.statics.updateWeight = async function(userID, weightId, weight, date, deleteWeight){
+  var user =  await this.findOne({ _id: userID})
+  if(!user){
+    throw new Error("User does not exist");
+  }
+
+  var index = user.weights.findIndex(function(weight){
+    return weight._id == weightId;
+  });
+  if(index == -1){
+    throw new Error("Weight does not exist");
+  }
+
+  if(deleteWeight){
+    user.weights.splice(index, 1)
+  }else{
+    user.weights[index].weight = weight;
+    user.weights[index].date = date;
+  }
+
+  await user.validate();
+
+  return await user.save()
+
 }
 
 userSchema.statics.updatePassword = async function(email, oldPassword, newPassword){
@@ -189,7 +266,7 @@ userSchema.statics.confirmRequest = async function(requestFromEmail,requestToEma
       user.update({'friendList.friendUserId': userRequest._id}, {'$set':{
         'friendList.$.status': FriendRequestStatus.Accepted
       }})
-      return await user.save();
+      return user.save();
     }
   });
   

@@ -32,7 +32,32 @@ exports.insert = async function(req, res, next){
 }
 
 exports.update = async function(req, res, next){
+  var activityId = req.body.activityId;
+  var activityUpdate = {
+    name: req.body.name,
+    activityType: req.body.activityType,
+    startDateTime: req.body.startDateTime,
+    endDateTime: req.body.endDateTime,
+    stepCount: req.body.stepCount,
+    duration: req.body.duration,
+    caloriesBurned: req.body.caloriesBurned,
+    distance: req.body.distance
+  }
 
+  Models.Activity.update(req.user._id, activityId, activityUpdate)
+  .then(function(activity){
+    return res.json({
+      status: "success",
+      message: "Activity updated successfully",
+      activityId: activity._id
+    })
+  })
+  .catch(function(e){
+    return res.json({
+      status: "error",
+      message: e.message
+    })
+  })
 }
 
 exports.getByTime = async function(req, res, next){
@@ -51,6 +76,25 @@ exports.getByTime = async function(req, res, next){
     return res.json({
       status: "success",
       activities: activities
+    })
+  })
+  .catch(function(e){
+    return res.json({
+      status: "error",
+      message: e.message
+    })
+  })
+    
+}
+
+exports.getById = async function(req, res, next){
+  var activityId = req.query.activityId;
+
+  await Models.Activity.getById(activityId, req.user._id)
+  .then(function(activity){
+    return res.json({
+      status: "success",
+      activities: activity
     })
   })
   .catch(function(e){

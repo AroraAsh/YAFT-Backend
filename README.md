@@ -37,14 +37,28 @@ Parameters: oldPassword, newPassword
 
 POST /user/update
 
-Parameters: name, age, gender
+Parameters: name, age, email, gender, height, stepGoal, distanceGoal, calorieGoal, activityGoal, sleepGoal
+
+POST /user/add_weight
+
+Parameters: weight, date
+
+POST /user/update_weight
+
+Parameters: weightId, weight, date, delete ("true" if you want to delete the weight)
 
 POST /activity/insert
 
-Parameters: name, activityType, startDateType (yyyy-mm-dd hh:mm:ss or whatever Javascript Date.parse() can take), endDateTime, duration, caloriesBurned, distance
+Parameters: name, activityType, startDateType, endDateTime, stepCoumt, duration, caloriesBurned, distance
 
-POST /activity/update (not implemented yet)
+POST /activity/update
+
+Parameters: name, activityType, startDateTime, endDateTime, stepCount, duration, caloriesBurned, distance
 
 GET /activities/get_by_time 
 
 Parameters: start (date), end (date)
+
+GET /activities/get_by_id
+
+Parameters: activityId
