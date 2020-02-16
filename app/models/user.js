@@ -10,6 +10,7 @@ const saltRounds = 10;
 const FriendRequestStatus = Object.freeze({
   Requested: 'REQ',
   Accepted: 'ACC',
+  Rejected: "REJ"
 });
 
 const userSchema = new mongoose.Schema({
@@ -22,7 +23,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: [true, "User must have an email"],
     validate: {
-      validator: function(v){
+      validator: function (v) {
         return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v);;
       },
       message: () => "Email is not valid."
@@ -69,7 +70,7 @@ const userSchema = new mongoose.Schema({
   },
   weights: [
     {
-      weight:{
+      weight: {
         type: Number,
         min: [0, "Weight must be over 0"]
       },
@@ -78,23 +79,23 @@ const userSchema = new mongoose.Schema({
       }
     }
   ],
-  friendList:[{
-    friendUserId: {type:Schema.Types.ObjectId, ref:'User'},
+  friendList: [{
+    friendUserId: { type: Schema.Types.ObjectId, ref: 'User' },
     requestStatus: {
       type: String,
       enum: Object.values(FriendRequestStatus)
     }
   }
   ],
-  awards:[{
-    name:{
-      type:String
+  awards: [{
+    name: {
+      type: String
     },
-    desc:{
-      type:String
+    desc: {
+      type: String
     },
-    activityType:{
-      type:String,
+    activityType: {
+      type: String,
       enum: Object.values(ActivityType)
     },
 
@@ -102,47 +103,47 @@ const userSchema = new mongoose.Schema({
 });
 
 
-userSchema.statics.findByLogin = async function(email){
-    return await this.findOne({ email: email})
+userSchema.statics.findByLogin = async function (email) {
+  return await this.findOne({ email: email })
 };
 
-userSchema.statics.login = async function(email, password){
-  user = await this.findOne({email: email});
+userSchema.statics.login = async function (email, password) {
+  user = await this.findOne({ email: email });
 
-  if(!user){
+  if (!user) {
     return null;
   }
 
   const match = bcrypt.compareSync(password, user.passwordHash);
-  if(match){
+  if (match) {
     return user;
-  }else{
+  } else {
     return null;
   }
 }
 
-userSchema.statics.loginByToken = async function(token){
+userSchema.statics.loginByToken = async function (token) {
   [userId, token] = token.split(" ");
 
-  var user 
-  try{
-    user = await this.findOne({_id: userId})
-  }catch (e){
+  var user
+  try {
+    user = await this.findOne({ _id: userId })
+  } catch (e) {
     throw new Error("User does not exist")
   }
-  if(!user || !user.token){
+  if (!user || !user.token) {
     throw new Error("User does not exist")
   }
 
   var match = bcrypt.compareSync(token, user.token)
-  if(match){
+  if (match) {
     return user
-  }else{
+  } else {
     throw new Error("Token does not match")
   }
 }
 
-userSchema.statics.generateToken = async function(user){
+userSchema.statics.generateToken = async function (user) {
   var token = crypto.randomBytes(64).toString('hex');
   var tokenString = user._id + " " + token;
 
@@ -153,11 +154,11 @@ userSchema.statics.generateToken = async function(user){
   return tokenString;
 }
 
-userSchema.statics.deleteToken = async function(userId){
-  return await this.findByIdAndUpdate(userId, {token: null})
+userSchema.statics.deleteToken = async function (userId) {
+  return await this.findByIdAndUpdate(userId, { token: null })
 }
 
-userSchema.statics.register = async function(userAttributes){
+userSchema.statics.register = async function (userAttributes) {
   var user = new this();
 
   user.name = userAttributes.name;
@@ -165,18 +166,18 @@ userSchema.statics.register = async function(userAttributes){
   user.age = userAttributes.age;
   user.gender = userAttributes.gender;
   user.passwordHash = bcrypt.hashSync(userAttributes.password, saltRounds);
-  
+
   return await user.save()
 }
 
-userSchema.statics.update = async function(email, userUpdate){
-  var user =  await this.findOne({ email: email})
-  if(!user){
+userSchema.statics.update = async function (email, userUpdate) {
+  var user = await this.findOne({ email: email })
+  if (!user) {
     throw new Error("User does not exist")
   }
 
-  Object.keys(userUpdate).forEach(function(key, index){
-    if(userUpdate[key]){
+  Object.keys(userUpdate).forEach(function (key, index) {
+    if (userUpdate[key]) {
       user[key] = userUpdate[key];
     }
   })
@@ -186,13 +187,13 @@ userSchema.statics.update = async function(email, userUpdate){
   return await user.save()
 }
 
-userSchema.statics.addWeight = async function(userID, weight, date){
-  var user =  await this.findOne({ _id: userID})
-  if(!user){
+userSchema.statics.addWeight = async function (userID, weight, date) {
+  var user = await this.findOne({ _id: userID })
+  if (!user) {
     throw new Error("User does not exist")
   }
 
-  user.weights.push({weight: weight, date: date})
+  user.weights.push({ weight: weight, date: date })
 
   await user.validate();
 
@@ -200,22 +201,22 @@ userSchema.statics.addWeight = async function(userID, weight, date){
 
 }
 
-userSchema.statics.updateWeight = async function(userID, weightId, weight, date, deleteWeight){
-  var user =  await this.findOne({ _id: userID})
-  if(!user){
+userSchema.statics.updateWeight = async function (userID, weightId, weight, date, deleteWeight) {
+  var user = await this.findOne({ _id: userID })
+  if (!user) {
     throw new Error("User does not exist");
   }
 
-  var index = user.weights.findIndex(function(weight){
+  var index = user.weights.findIndex(function (weight) {
     return weight._id == weightId;
   });
-  if(index == -1){
+  if (index == -1) {
     throw new Error("Weight does not exist");
   }
 
-  if(deleteWeight){
+  if (deleteWeight) {
     user.weights.splice(index, 1)
-  }else{
+  } else {
     user.weights[index].weight = weight;
     user.weights[index].date = date;
   }
@@ -226,50 +227,83 @@ userSchema.statics.updateWeight = async function(userID, weightId, weight, date,
 
 }
 
-userSchema.statics.updatePassword = async function(email, oldPassword, newPassword){
-  var user =  await this.findOne({ email: email})
-  if(!user){
+userSchema.statics.updatePassword = async function (email, oldPassword, newPassword) {
+  var user = await this.findOne({ email: email })
+  if (!user) {
     throw new Error("User does not exist")
   }
 
   const match = bcrypt.compareSync(oldPassword, user.passwordHash);
-  if(match){
+  if (match) {
     user.passwordHash = bcrypt.hashSync(newPassword, saltRounds);
     return await user.save();
-  }else{
+  } else {
     throw new Error("The old password provided is not correct.")
   }
 }
 
-userSchema.statics.friendRequest = async function(requestFromEmail,requestToEmailId){
-  var user = await this.findOne({email: requestFromEmail})
-  if(!user)
+userSchema.statics.friendRequest = async function (requestFromEmail, requestToEmailId) {
+  var user = await this.findOne({ email: requestFromEmail })
+  if (!user)
     throw new Error("User does not exist.")
-  var userRequest = await this.findOne({email: requestToEmailId})
-  if(!user)
+  var userRequest = await this.findOne({ email: requestToEmailId })
+  if (!user)
     throw new Error("Requested user does not exist.")
-  user.friendList.push({friendUserId: userRequest._id,status: FriendRequestStatus.Requested})
+  user.friendList.push({ friendUserId: userRequest._id, status: FriendRequestStatus.Requested })
   return await user.save();
 }
 
-userSchema.statics.confirmRequest = async function(requestFromEmail,requestToEmailId){
-  
-  var userRequest = await this.findOne({email: requestToEmailId})
-  if(!user)
-    throw new Error("Requested user does not exist.")
-  this.findOne({'friendList':{$elemMatch: {friendUserId: userRequest._id}}},function(err,user){
+userSchema.statics.confirmRequest = async function (requestFromEmail, requestToEmailId) {
 
+  var userRequest = await this.findOne({ email: requestToEmailId })
+  if (!user)
+    throw new Error("Requested user 1 does not exist.")
+    
+    var userRequestFrom = await this.findOne({ email: requestFromEmail })
+    if (!user)
+      throw new Error("Requested user does not exist.")
 
-    if(!user)
-      throw new Error("User does not exist.")
-    else{
-      user.update({'friendList.friendUserId': userRequest._id}, {'$set':{
-        'friendList.$.status': FriendRequestStatus.Accepted
-      }})
-      return user.save();
-    }
+  var index = userRequest.friendList.findIndex(function (request) {
+    return request.friendUserId == userRequest._id;
   });
+  if (index == -1) {
+    throw new Error("Friend does not exist");
+  }
+
+  await user.validate();
+
+    user.friendList[index].requestStatus = FriendRequestStatus.Accepted;
+    return user.save();
+}
+
+userSchema.statics.getFriends = async function (userId){
+
+  var user = await this.findOne({email: userId})
+  if(!user)
+    throw new Error("User does not exist")
   
+    return await this.aggregate([
+    { "$match": { "_id": user._id } },
+    { "$lookup": {
+      "from": User.collection.name,
+      "let": { "friendList": "$friendList" },
+      "pipeline": [
+        { "$match": {
+          "friendList.requestStatus": FriendRequestStatus.Accepted,
+        }},
+        { "$project": { 
+            "name": 1, 
+            "email": 1,
+            "gender": 1,
+            "stepGoal": 1
+          }
+        }
+      ],
+      "as": "friends"
+    }}, 
+  ])
+  
+
 }
 
 
