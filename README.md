@@ -62,3 +62,15 @@ Parameters: start (date), end (date)
 GET /activities/get_by_id
 
 Parameters: activityId
+
+POST /friends/request
+
+Parameters: requestFromEmailId,requestToEmailId
+
+POST /friends/confirm
+
+Parameters: requestFromEmailId,requestToEmailId
+
+GET /friends
+
+ 
