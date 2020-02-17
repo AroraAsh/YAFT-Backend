@@ -83,7 +83,7 @@ const userSchema = new mongoose.Schema({
     friendUserId: { type: Schema.Types.ObjectId, ref: 'User' },
     requestStatus: {
       type: String,
-      enum: Object.values(FriendRequestStatus)
+      enum: ["REQ","ACC","REJ"]
     }
   }
   ],
@@ -249,61 +249,55 @@ userSchema.statics.friendRequest = async function (requestFromEmail, requestToEm
   var userRequest = await this.findOne({ email: requestToEmailId })
   if (!user)
     throw new Error("Requested user does not exist.")
-  user.friendList.push({ friendUserId: userRequest._id, status: FriendRequestStatus.Requested })
-  return await user.save();
+    userRequest.friendList.push({ friendUserId: user._id, requestStatus: FriendRequestStatus.Requested })
+  return await userRequest.save();
 }
 
-userSchema.statics.confirmRequest = async function (requestFromEmail, requestToEmailId) {
+userSchema.statics.confirmRequest = async function (requestFromEmail, requestToEmail) {
 
-  var userRequest = await this.findOne({ email: requestToEmailId })
-  if (!user)
+  var userConfirming = await this.findOne({ email: requestFromEmail })
+  if (!userConfirming)
     throw new Error("Requested user 1 does not exist.")
     
-    var userRequestFrom = await this.findOne({ email: requestFromEmail })
-    if (!user)
+    var userRequestFrom = await this.findOne({ email: requestToEmail })
+    if (!userRequestFrom)
       throw new Error("Requested user does not exist.")
-
-  var index = userRequest.friendList.findIndex(function (request) {
-    return request.friendUserId == userRequest._id;
+      console.log("Email:"+requestToEmail)
+      console.log("ID:"+userRequestFrom._id)
+  var index = userConfirming.friendList.findIndex(function (request) {
+    console.log("IDFriends:"+request.friendUserId)
+    return request.friendUserId.equals(userRequestFrom._id);
   });
   if (index == -1) {
     throw new Error("Friend does not exist");
   }
 
-  await user.validate();
-
-    user.friendList[index].requestStatus = FriendRequestStatus.Accepted;
-    return user.save();
+  
+    userRequestFrom.friendList.push({ friendUserId: userConfirming._id, requestStatus: FriendRequestStatus.Accepted})
+    userConfirming.friendList[index].requestStatus = FriendRequestStatus.Accepted;
+    await userConfirming.validate();
+    await userRequestFrom.save();
+    return userConfirming.save();
 }
 
 userSchema.statics.getFriends = async function (userId){
-
-  var user = await this.findOne({email: userId})
+ 
+  return await this.find({email: userId,"friendList.requestStatus":{$in:[FriendRequestStatus.Accepted]}},'name email friendList')
+  .populate('friendList.friendUserId','name email gender weights height age stepGoal')
   if(!user)
     throw new Error("User does not exist")
   
     return await this.aggregate([
-    { "$match": { "_id": user._id } },
-    { "$lookup": {
-      "from": User.collection.name,
-      "let": { "friendList": "$friendList" },
-      "pipeline": [
-        { "$match": {
-          "friendList.requestStatus": FriendRequestStatus.Accepted,
-        }},
-        { "$project": { 
-            "name": 1, 
-            "email": 1,
-            "gender": 1,
-            "stepGoal": 1
-          }
-        }
-      ],
-      "as": "friends"
-    }}, 
-  ])
+      // Start with a $match pipeline which can take advantage of an index and limit documents processed
+      { $match : {
+         "friendList.requestStatus": FriendRequestStatus.Accepted
+      }},
+      { $unwind : "$friendList" },
+      { $match : {
+        "friendList.requestStatus": FriendRequestStatus.Accepted
+      }}
+   ]).populate('friendList.friendUserId','name email stepGoal')
   
-
 }
 
 

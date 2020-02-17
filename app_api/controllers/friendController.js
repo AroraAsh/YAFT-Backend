@@ -4,7 +4,7 @@ var Models = require('../../app/models')
 
 exports.friendRequest = async function(req,res,next){
 
-    var requestFromEmailId= req.body.requestFromEmailId
+    var requestFromEmailId= req.user.email
     var requestToEmailId= req.body.requestToEmailId
 
     await Models.User.friendRequest(requestFromEmailId,requestToEmailId).then(function(activity){
@@ -23,7 +23,7 @@ exports.friendRequest = async function(req,res,next){
 
 exports.confirmRequest = async function(req,res,next){
 
-    var requestFromEmailId= req.body.requestFromEmailId
+    var requestFromEmailId= req.user.email
     var requestToEmailId= req.body.requestToEmailId
     await Models.User.confirmRequest(requestFromEmailId,requestToEmailId).then(function(activity){
         return res.json({
@@ -43,11 +43,12 @@ exports.confirmRequest = async function(req,res,next){
 
 exports.getFriends = async function(req,res,next){
     var email = req.user.email
-    await Models.User.getFriends(email).then(function(user){
+    await Models.User.getFriends(email).then(function(friends){
+     
       return res.json({
         status: "success",
         message: "Friend retreived successfully",
-        user
+        friends
       })
     })
     .catch(function(e){

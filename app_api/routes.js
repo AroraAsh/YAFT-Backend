@@ -68,4 +68,7 @@ module.exports = function(app){
   app.route('/friends/confirm')
     .post([protectedURL, friendController.confirmRequest])
 
+  app.route('/friends')
+    .get([protectedURL, friendController.getFriends])
+
 }
