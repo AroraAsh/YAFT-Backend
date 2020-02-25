@@ -17,6 +17,10 @@ server.js - The entry point of our application
 To run the server run 'node server.js'.  You can also run 'nodemon server.js' in development for automatic code reloading.
 
 
+# POST Data
+Use JSON or form data
+For JSON use application/json in content type header.
+
 # API Specification
 
 POST /login
@@ -24,6 +28,8 @@ POST /login
 Parameters: email, password, remember_me
 
 GET /logout
+
+----------------------------User API's-----------------------------------------------------
 
 POST /user/register
 
@@ -47,6 +53,15 @@ POST /user/update_weight
 
 Parameters: weightId, weight, date, delete ("true" if you want to delete the weight)
 
+GET /user/all
+
+POST /user/location
+
+Parameters: lat,long
+
+
+----------------------------Activity API's-----------------------------------------------------
+
 POST /activity/insert
 
 Parameters: name, activityType, startDateType, endDateTime, stepCoumt, duration, caloriesBurned, distance
@@ -62,6 +77,8 @@ Parameters: start (date), end (date)
 GET /activities/get_by_id
 
 Parameters: activityId
+
+----------------------------Friend API's-----------------------------------------------------
 
 POST /friends/request
 

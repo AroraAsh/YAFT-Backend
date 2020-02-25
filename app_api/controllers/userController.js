@@ -236,6 +236,7 @@ exports.updatePassword = async function(req, res){
   })
 }
 
+
 exports.profile = async function(req, res){
   return res.json({
     status: "success",
@@ -252,7 +253,42 @@ exports.profile = async function(req, res){
       sleepGoal: req.user.sleepGoal,
       weights: req.user.weights,
       awards: req.user.awards,
-      friends: req.user.friendList
+      friends: req.user.friendList,
+      location: req.user.location
     }
+  })
+}
+
+exports.getAll = async function(req,res){
+  await Models.User.getAll()
+  .then(function(users){
+    return res.json({
+      status: "success",
+      message: "Users retrieved.",
+      users
+    })
+  })
+  .catch(function(e){
+    return res.json({
+      status: "error",
+      message: e.message
+    })
+  })
+}
+
+exports.updateLocation = async function(req,res){
+  var email = req.user.email
+  await Models.User.updateLocation(email,req.body.lat,req.body.long)
+  .then(function(){
+    return res.json({
+      status: "success",
+      message: "Location Updated."
+    })
+  })
+  .catch(function(e){
+    return res.json({
+      status: "error",
+      message: e.message
+    })
   })
 }

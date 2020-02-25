@@ -44,7 +44,6 @@ exports.confirmRequest = async function(req,res,next){
 exports.getFriends = async function(req,res,next){
     var email = req.user.email
     await Models.User.getFriends(email).then(function(friends){
-     
       return res.json({
         status: "success",
         message: "Friend retreived successfully",

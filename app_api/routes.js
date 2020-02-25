@@ -49,6 +49,11 @@ module.exports = function(app){
   app.route('/user/update_weight')
     .post([protectedURL, userController.updateWeight])
 
+  app.route('/user/all')
+    .get([protectedURL, userController.getAll])  
+
+  app.route('/user/location')
+    .post([protectedURL, userController.updateLocation])
 
   app.route('/activity/insert')
     .post([protectedURL, activityController.insert])

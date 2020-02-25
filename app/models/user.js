@@ -99,9 +99,19 @@ const userSchema = new mongoose.Schema({
       enum: Object.values(ActivityType)
     },
 
-  }]
+  }],
+  location: {
+    type: {
+      type: String,
+      enum: ['Point']
+    },
+    coordinates: {
+      type: [Number]
+    }
+  }
 });
 
+userSchema.index({'location.coordinates': '2dsphere'});
 
 userSchema.statics.findByLogin = async function (email) {
   return await this.findOne({ email: email })
@@ -300,6 +310,17 @@ userSchema.statics.getFriends = async function (userId){
   
 }
 
+userSchema.statics.getAll = async function(){
+  return await this.find({},'name email');
+}
+
+userSchema.statics.updateLocation = async function(email,lat,long){
+  var user = await this.findOne({email: email})
+  if (!user)
+    throw new Error("User does not exist.")
+  user.location.coordinates = [long,lat]
+  return await user.save()
+}
 
 var model = mongoose.model('User', userSchema);
 module.exports = model
