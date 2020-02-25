@@ -82,11 +82,11 @@ Parameters: activityId
 
 POST /friends/request
 
-Parameters: requestFromEmailId,requestToEmailId
+Parameters: requestToEmailId
 
 POST /friends/confirm
 
-Parameters: requestFromEmailId,requestToEmailId
+Parameters: requestToEmailId
 
 GET /friends
 
