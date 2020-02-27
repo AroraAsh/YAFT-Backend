@@ -45,6 +45,15 @@ const activitySchema = new mongoose.Schema({
         type:Number,
         min:0,
         default: 0
+    },
+    locations:{
+        type: {
+            type: String,
+            enum: ['MultiPoint']
+          },
+          coordinates: {
+            type: [[Number]]
+          }
     }
 });
 

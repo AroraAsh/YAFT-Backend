@@ -5,6 +5,7 @@ module.exports = function(app){
   var userController = require('./controllers/userController.js')
   var activityController = require('./controllers/activityController.js')
   var friendController = require('./controllers/friendController.js')
+  var contestController = require('./controllers/contestController')
 
   function protectedURL(req, res, next){
     if(!req.user){
@@ -76,4 +77,12 @@ module.exports = function(app){
   app.route('/friends')
     .get([protectedURL, friendController.getFriends])
 
+  app.route('/contest')
+    .get([protectedURL,contestController.getContests])
+
+  app.route('/contest')
+    .post([protectedURL,contestController.makeContest])
+
+  app.route('/contest/join')
+    .post([protectedURL,contestController.joinContest])
 }
