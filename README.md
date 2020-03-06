@@ -64,11 +64,11 @@ Parameters: lat,long
 
 POST /activity/insert
 
-Parameters: name, activityType, startDateType, endDateTime, stepCoumt, duration, caloriesBurned, distance
+Parameters: name, activityType, startDateType, endDateTime, stepCoumt, duration, caloriesBurned, distance,locations
 
 POST /activity/update
 
-Parameters: name, activityType, startDateTime, endDateTime, stepCount, duration, caloriesBurned, distance
+Parameters: name, activityType, startDateTime, endDateTime, stepCount, duration, caloriesBurned, distance,locations
 
 GET /activities/get_by_time 
 
@@ -90,4 +90,21 @@ Parameters: requestToEmailId
 
 GET /friends
 
- 
+ ---------------------------Contest APIS--------------------------------------------------------
+
+ GET /contest
+ Gets all contests public and private
+
+ POST /contest
+ Parameters:    name
+                description
+                startDateTime
+                endDateTime
+                contestType (PUBLIC,PRIVATE)
+                contestGoalType (STEPS,DISTANCE,LOCATION)
+                contestGoalValue (number)
+                locationStart ([long,lat])
+                locationEnd ([long,lat])
+
+POST /contest/join
+Parameters: contestID
