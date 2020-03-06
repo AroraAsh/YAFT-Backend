@@ -92,19 +92,19 @@ GET /friends
 
  ---------------------------Contest APIS--------------------------------------------------------
 
- GET /contest
- Gets all contests public and private
+ GET /contest  
+ Gets all contests public and private  
 
- POST /contest
- Parameters:    name
-                description
-                startDateTime
-                endDateTime
-                contestType (PUBLIC,PRIVATE)
-                contestGoalType (STEPS,DISTANCE,LOCATION)
-                contestGoalValue (number)
-                locationStart ([long,lat])
-                locationEnd ([long,lat])
-
-POST /contest/join
-Parameters: contestID
+ POST /contest  
+ Parameters:    name  
+                description  
+                startDateTime  
+                endDateTime  
+                contestType (PUBLIC,PRIVATE)  
+                contestGoalType (STEPS,DISTANCE,LOCATION)  
+                contestGoalValue (number)  
+                locationStart ([long,lat])  
+                locationEnd ([long,lat])  
+  
+POST /contest/join  
+Parameters: contestID  
