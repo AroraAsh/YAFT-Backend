@@ -78,6 +78,7 @@ activitySchema.statics.insert = async function(activityAttributes){
     activity.duration = activityAttributes.duration;
     activity.caloriesBurned = activityAttributes.caloriesBurned;
     activity.distance = activityAttributes.distance;
+    activity.locations.coordinates = activityAttributes.locations;
 
     return await activity.save();
 }

@@ -12,7 +12,8 @@ exports.insert = async function(req, res, next){
     stepCount: req.body.stepCount,
     duration: req.body.duration,
     caloriesBurned: req.body.caloriesBurned,
-    distance: req.body.distance
+    distance: req.body.distance,
+    locations: req.body.locations
   }
 
   activity = await Models.Activity.insert(activity)
@@ -41,7 +42,10 @@ exports.update = async function(req, res, next){
     stepCount: req.body.stepCount,
     duration: req.body.duration,
     caloriesBurned: req.body.caloriesBurned,
-    distance: req.body.distance
+    distance: req.body.distance,
+    locations:{
+      coordinates: req.body.locations
+    }
   }
 
   Models.Activity.update(req.user._id, activityId, activityUpdate)
