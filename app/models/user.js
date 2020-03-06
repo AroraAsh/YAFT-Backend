@@ -272,6 +272,7 @@ userSchema.statics.confirmRequest = async function (requestFromEmail, requestToE
     var userRequestFrom = await this.findOne({ email: requestToEmail })
     if (!userRequestFrom)
       throw new Error("Requested user does not exist.")
+      
       console.log("Email:"+requestToEmail)
       console.log("ID:"+userRequestFrom._id)
   var index = userConfirming.friendList.findIndex(function (request) {
@@ -292,6 +293,13 @@ userSchema.statics.confirmRequest = async function (requestFromEmail, requestToE
 
 userSchema.statics.getFriends = async function (userId){
  
+return await this.find({email: userId},'name email friendList')
+  .populate({
+    path: 'friendList.friendUserId',
+    select: 'name email gender weights height age stepGoal'
+  })
+
+
   return await this.find({email: userId,"friendList.requestStatus":{$in:[FriendRequestStatus.Accepted]}},'name email friendList')
   .populate('friendList.friendUserId','name email gender weights height age stepGoal')
   if(!user)
