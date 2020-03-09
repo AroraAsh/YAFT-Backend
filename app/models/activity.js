@@ -54,6 +54,10 @@ const activitySchema = new mongoose.Schema({
           coordinates: {
             type: [[Number]]
           }
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false
     }
 });
 
@@ -83,10 +87,15 @@ activitySchema.statics.insert = async function(activityAttributes){
     return await activity.save();
 }
 
-activitySchema.statics.update = async function(userId, activityId, activityUpdate){
+activitySchema.statics.update = async function(userId, activityId, activityUpdate,isDeleted){
     var activity = await this.findOne({ _id: activityId, userID: userId})
     if(!activity){
       throw new Error("Activity does not exist or does not belong to this user")
+    }
+    if(isDeleted){
+        activity.isDeleted = isDeleted;
+        await activity.validate();
+        return await activity.save();
     }
 
     Object.keys(activityUpdate).forEach(function(key, index){
@@ -105,14 +114,16 @@ activitySchema.statics.getByTime = async function(start, end, userID){
     return await this.find({
         userID: userID, 
         startDateTime: { $lte: end}, 
-        endDateTime: { $gte: start }
+        endDateTime: { $gte: start },
+        isDeleted:false
     })
 }
 
 activitySchema.statics.getById = async function(activityId, userID){
     return await this.find({
         userID: userID, 
-        _id: activityId
+        _id: activityId,
+        isDeleted:false
     })
 }
 

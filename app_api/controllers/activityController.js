@@ -48,7 +48,7 @@ exports.update = async function(req, res, next){
     }
   }
 
-  Models.Activity.update(req.user._id, activityId, activityUpdate)
+  Models.Activity.update(req.user._id, activityId, activityUpdate,req.body.isDeleted)
   .then(function(activity){
     return res.json({
       status: "success",
