@@ -40,6 +40,24 @@ exports.confirmRequest = async function(req,res,next){
     
 }
 
+exports.rejectRequest = async function(req,res,next){
+
+  var requestFromId= req.user._id
+  var requestToEmailId= req.body.requestToEmailId
+  await Models.User.rejectRequest(requestFromId,requestToEmailId).then(function(activity){
+      return res.json({
+        status: "success",
+        message: "Friend Request rejected successfully"
+      })
+    })
+    .catch(function(e){
+      return res.json({
+        status: "error",
+        message: e.message
+      })
+    })
+  
+}
 
 exports.getFriends = async function(req,res,next){
     var email = req.user.email

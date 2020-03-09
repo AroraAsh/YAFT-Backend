@@ -272,11 +272,7 @@ userSchema.statics.confirmRequest = async function (requestFromEmail, requestToE
     var userRequestFrom = await this.findOne({ email: requestToEmail })
     if (!userRequestFrom)
       throw new Error("Requested user does not exist.")
-      
-      console.log("Email:"+requestToEmail)
-      console.log("ID:"+userRequestFrom._id)
   var index = userConfirming.friendList.findIndex(function (request) {
-    console.log("IDFriends:"+request.friendUserId)
     return request.friendUserId.equals(userRequestFrom._id);
   });
   if (index == -1) {
@@ -290,6 +286,24 @@ userSchema.statics.confirmRequest = async function (requestFromEmail, requestToE
     await userRequestFrom.save();
     return userConfirming.save();
 }
+
+userSchema.statics.rejectRequest = async function (requestFromId, requestToEmail) {
+
+  var userConfirming = await this.findOne({ email: requestFromEmail })
+  if (!userConfirming)
+    throw new Error("Requested user 1 does not exist.")
+
+  var index = userConfirming.friendList.findIndex(function (request) {
+    return request.friendUserId.equals(requestFromId);
+  });
+  if (index == -1) {
+    throw new Error("Friend does not exist");
+  }
+    userConfirming.friendList.splice(index,1);
+    return userConfirming.save();
+}
+
+
 
 userSchema.statics.getFriends = async function (userId){
  
@@ -318,8 +332,14 @@ return await this.find({email: userId},'name email friendList')
   
 }
 
-userSchema.statics.getAll = async function(){
-  return await this.find({},'name email');
+userSchema.statics.getAll = async function(friendArray){
+  var allUsers = await this.find({},'name email');
+  allUsers = allUsers.filter(entry => {
+    var temp = entry._id.toString();
+    return !friendArray.includes(temp);
+  })
+  return allUsers;
+  
 }
 
 userSchema.statics.updateLocation = async function(email,lat,long){

@@ -187,7 +187,8 @@ exports.addWeight = async function(req, res){
     req.session.passport.user = user;
     return res.json({
       status: "success",
-      message: "Added weight successuflly."
+      message: "Added weight successuflly.",
+      weightId: user.weight[user.weight.length - 1]._id
     })
   })
   .catch(function(e){
@@ -260,7 +261,12 @@ exports.profile = async function(req, res){
 }
 
 exports.getAll = async function(req,res){
-  await Models.User.getAll()
+  var arr = [];
+  req.user.friendList.forEach(function(entry){
+    arr.push(entry.friendUserId.toString());
+  })
+  arr.push(req.user._id.toString());
+  await Models.User.getAll(arr)
   .then(function(users){
     return res.json({
       status: "success",
