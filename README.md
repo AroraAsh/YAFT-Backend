@@ -86,8 +86,12 @@ Parameters: requestToEmailId
 
 POST /friends/confirm
 
-Parameters: requestToEmailId
+Parameters: requestToEmailId  
 
+POST /friends/reject
+
+Parameters: requestToEmailId  
+  
 GET /friends
 
  ---------------------------Contest APIS--------------------------------------------------------
