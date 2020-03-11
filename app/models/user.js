@@ -259,6 +259,13 @@ userSchema.statics.friendRequest = async function (requestFromEmail, requestToEm
   var userRequest = await this.findOne({ email: requestToEmailId })
   if (!user)
     throw new Error("Requested user does not exist.")
+    var index = user.friendList.findIndex(function (entry) {
+      return entry.friendUserId == user._id;
+    });
+    if (index > -1) {
+      throw new Error("Friend Already exists");
+      return userRequest;
+    }
     userRequest.friendList.push({ friendUserId: user._id, requestStatus: FriendRequestStatus.Requested })
   return await userRequest.save();
 }
@@ -289,18 +296,20 @@ userSchema.statics.confirmRequest = async function (requestFromEmail, requestToE
 
 userSchema.statics.rejectRequest = async function (requestFromId, requestToEmail) {
 
-  var userConfirming = await this.findOne({ email: requestFromEmail })
-  if (!userConfirming)
+  var userThatSentRequest = await this.findOne({ email:requestToEmail })
+  if (!userThatSentRequest)
     throw new Error("Requested user 1 does not exist.")
 
-  var index = userConfirming.friendList.findIndex(function (request) {
-    return request.friendUserId.equals(requestFromId);
+  var userRejectingRequest = await this.findOne({_id:requestFromId})
+
+  var index = userRejectingRequest.friendList.findIndex(function (request) {
+    return request.friendUserId.equals(userThatSentRequest._id);
   });
   if (index == -1) {
     throw new Error("Friend does not exist");
   }
-    userConfirming.friendList.splice(index,1);
-    return userConfirming.save();
+  userRejectingRequest.friendList.splice(index,1);
+  return userRejectingRequest.save();
 }
 
 
