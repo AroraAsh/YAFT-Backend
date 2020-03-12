@@ -1,30 +1,25 @@
-const AchievementTypes = [
-  {
-    type: "total_distance",
+const AchievementTypes = {
+  total_distance: {
     name: "Distance Achievement",
     template_description: "Move {value} km since joining",
     levels: [10, 50, 100, 500, 1000, 5000]
   },
-  {
-    type: "total_steps",
+  total_steps: {
     name: "Step Achievement",
     template_description: "Make {value} steps since joining",
     levels: [5000, 50000, 100000, 1000000]
   },
-  {
-    type: "daily_distance",
+  daily_distance: {
     name: "Daily Distance Achievement",
     template_description: "Move {value} km in a day",
     levels: [1, 2, 5, 10, 20, 30, 40, 50, 100]
   },
-  {
-    type: "monthly_distance",
+  monthly_distance: {
     name: "Weekly Distance Achievement",
     template_description: "Move {value} km in a week",
     levels: [10, 25, 50, 100]
   },
-  {
-    type: "total_weight_loss",
+  total_weight_loss: {
     name: "Weight Loss Achievement",
     template_description: "Lose {value} kg since joining",
     levels: [1, 2, 5, 10, 20, 30, 40, 50]
@@ -35,26 +30,22 @@ const AchievementTypes = [
   //   template_description: "Lose {value} kg in a month",
   //   levels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   // },
-  {
-    type: "total_running",
+  total_running: {
     name: "Running Achievement",
     template_description: "Run {value} km since joining",
     levels: [10, 50, 100, 500, 1000, 5000]
   },
-  {
-    type: "total_walking",
+  total_walking: {
     name: "Walking Achievement",
     template_description: "Walk {value} km since joining",
     levels: [10, 50, 100, 500, 1000, 5000]
   },
-  {
-    type: "total_biking",
+  total_biking: {
     name: "Biking Achievement",
     template_description: "Bike {value} km since joining",
     levels: [10, 50, 100, 500, 1000, 5000]
   },
-  {
-    type: "challenge",
+  challenge: {
     name: "Challenge Achievement",
     template_description: "Win {value} challenges",
     levels: [1, 5, 10]
@@ -66,7 +57,7 @@ const AchievementTypes = [
   //   levels: [1, 5, 10, 50, 100]
   // },
   
-];
+};
 
 exports.getAchievementTypes = function(){
   return AchievementTypes;
