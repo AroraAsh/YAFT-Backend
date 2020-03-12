@@ -184,10 +184,12 @@ exports.addWeight = async function(req, res){
 
   await Models.User.addWeight(req.user._id, weight, date)
   .then(function(user){
+    Models.User.calculateWeightAchievements(req.user.email)
     req.session.passport.user = user;
     return res.json({
       status: "success",
-      message: "Added weight successuflly."
+      message: "Added weight successuflly.",
+      weightId: user.weights[user.weights.length -1]._id
     })
   })
   .catch(function(e){
@@ -207,9 +209,11 @@ exports.updateWeight = async function(req, res){
   await Models.User.updateWeight(req.user._id, weightId, weight, date, deleteWeight)
   .then(function(user){
     req.session.passport.user = user;
+    Models.User.calculateWeightAchievements(req.user.email)
     return res.json({
       status: "success",
-      message: "Updated weight successuflly."
+      message: "Updated weight successuflly.",
+      weightId: user.weights[user.weights.length -1]._id
     })
   })
   .catch(function(e){
@@ -238,23 +242,30 @@ exports.updatePassword = async function(req, res){
 
 
 exports.profile = async function(req, res){
+  var user = await Models.User.findOne({ email: req.user.email });
+  if(!user){
+    user = req.user
+  }else{
+    req.session.passport.user = user;
+  }
+
   return res.json({
     status: "success",
     result:{
-      name: req.user.name,
-      email: req.user.email,
-      age: req.user.age,
-      gender: req.user.gender,
-      height: req.user.height,
-      stepGoal: req.user.stepGoal,
-      distanceGoal: req.user.distanceGoal,
-      calorieGoal: req.user.calorieGoal,
-      activityGoal: req.user.activityGoal,
-      sleepGoal: req.user.sleepGoal,
-      weights: req.user.weights,
-      awards: req.user.awards,
-      friends: req.user.friendList,
-      location: req.user.location
+      name: user.name,
+      email: user.email,
+      age: user.age,
+      gender: user.gender,
+      height: user.height,
+      stepGoal: user.stepGoal,
+      distanceGoal: user.distanceGoal,
+      calorieGoal: user.calorieGoal,
+      activityGoal: user.activityGoal,
+      sleepGoal: user.sleepGoal,
+      weights: user.weights,
+      achievements: user.achievements,
+      friends: user.friendList,
+      location: user.location
     }
   })
 }

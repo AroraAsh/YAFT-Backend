@@ -108,3 +108,8 @@ GET /friends
   
 POST /contest/join  
 Parameters: contestID  
+
+ ---------------------------Achievement APIS--------------------------------------------------------
+
+ get /achievements/list
+ Returns a list of all possible achievements and their levels

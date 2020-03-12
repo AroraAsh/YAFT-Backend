@@ -6,6 +6,7 @@ module.exports = function(app){
   var activityController = require('./controllers/activityController.js')
   var friendController = require('./controllers/friendController.js')
   var contestController = require('./controllers/contestController')
+  var achievementController = require('./controllers/achievementController.js')
 
   function protectedURL(req, res, next){
     if(!req.user){
@@ -85,4 +86,9 @@ module.exports = function(app){
 
   app.route('/contest/join')
     .post([protectedURL,contestController.joinContest])
+
+
+  app.route('/achievements/list')
+    .get([achievementController.list])
+
 }

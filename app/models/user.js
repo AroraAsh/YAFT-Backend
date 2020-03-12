@@ -6,6 +6,7 @@ const ActivityType = require('./activityType.js');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const Models = require('.')
 
 const FriendRequestStatus = Object.freeze({
   Requested: 'REQ',
@@ -87,17 +88,13 @@ const userSchema = new mongoose.Schema({
     }
   }
   ],
-  awards: [{
-    name: {
+  achievements: [{
+    id: {
       type: String
     },
-    desc: {
-      type: String
-    },
-    activityType: {
-      type: String,
-      enum: Object.values(ActivityType)
-    },
+    value: {
+      type: Number
+    }
 
   }],
   location: {
@@ -328,6 +325,174 @@ userSchema.statics.updateLocation = async function(email,lat,long){
     throw new Error("User does not exist.")
   user.location.coordinates = [long,lat]
   return await user.save()
+}
+
+userSchema.statics.calculateTotalAchievements = async function(email){
+  var user = await this.findOne({ email: email })
+  if (!user) {
+    throw new Error("User does not exist")
+  }
+
+  var distance = 0;
+  var steps = 0;
+  var run_distance = 0;
+  var bike_distance = 0;
+  var walk_distance = 0;
+  var max_daily_distance = 0;
+  var max_monthly_distance = 0;
+
+  //total agregates
+  await Models.Activity.
+    aggregate([
+      {$match: {userID: user._id}},
+      {
+        $project: {
+          _id: 0,
+          distance: '$distance',
+          walk_distance: {$cond: [{$eq: ['$activityType', 'WALKING']}, '$distance', 0]},
+          run_distance: {$cond: [{$eq: ['$activityType', 'RUNNING']}, '$distance', 0]},
+          bike_distance: {$cond: [{$eq: ['$activityType', 'BICYCLE']}, '$distance', 0]},
+        }
+      },
+      {
+        $group: {
+          _id: 0,
+          distance: {$sum: "$distance"},
+          steps:{$sum: "$stepCount"},
+          walk_distance: {$sum: "$walk_distance"},
+          run_distance: {$sum: "$run_distance"},
+          bike_distance: {$sum: "$bike_distance"}
+        }
+      }
+    ]).
+    then(function (res) {
+      res = res[0]
+      if(res){
+        distance = res.distance;
+        steps = res.steps;
+        run_distance = res.run_distance;
+        bike_distance = res.bike_distance;
+        walk_distance = res.walk_distance;
+      }
+    });
+
+    //monthly aggregates
+    await Models.Activity.
+      aggregate([
+        {$match: {userID: user._id}},
+        {
+          $group: {
+            _id: {month: {$month: "$startDateTime"}, year: {$year: "$startDateTime"}},
+            distance: {$sum: "$distance"}
+          }
+        },
+        {
+          $group: {
+            _id: 0,
+            max_monthly_distance: {$max: "$distance"}
+          }
+        }
+      ]).
+      then(function (res) {
+        res = res[0]
+        if(res){
+          max_monthly_distance = res.max_monthly_distance;
+        }
+      });
+
+    //daily aggregates
+    await Models.Activity.
+      aggregate([
+        {$match: {userID: user._id}},
+        {
+          $group: {
+            _id: {day: {$dayOfYear: "$startDateTime"}, year: {$year: "$startDateTime"}},
+            distance: {$sum: "$distance"}
+          }
+        },
+        {
+          $group: {
+            _id: 0,
+            max_daily_distance: {$max: "$distance"}
+          }
+        }
+      ]).
+      then(function (res) {
+        res = res[0]
+        if(res){
+          max_daily_distance = res.max_daily_distance;
+        }
+      });
+
+  var achievement_map = {}
+  user.achievements.forEach(function(achievement){
+    achievement_map[achievement.id] = achievement
+  })
+  var updates = [
+    {id: "total_distance", value: distance/1000},
+    {id: "total_steps", value: steps},
+    {id: "total_running", value: run_distance/1000},
+    {id: "total_walking", value: walk_distance/1000},
+    {id: "total_biking", value: bike_distance/1000},
+    {id: "daily_distance", value: max_daily_distance/1000},
+    {id: "monthly_distance", value: max_monthly_distance/1000}
+  ]
+  updates.forEach(function(u){
+    if(achievement_map[u.id]){
+      achievement_map[u.id].value=u.value
+    }else{
+      user.achievements.push(u)
+    }
+  })
+
+  await user.save()
+}
+
+userSchema.statics.calculateWeightAchievements = async function(email){
+  var user = await this.findOne({ email: email })
+  if (!user) {
+    throw new Error("User does not exist")
+  }
+
+  
+  user.weights.sort(sorter("date"))
+
+  var max = -Infinity
+  var total_weight_loss = 0
+  user.weights.forEach(function(weight){
+    max = Math.max(max, weight.weight)
+    total_weight_loss = Math.max(max-weight.weight, total_weight_loss)
+  })
+
+  var achievement_map = {}
+  user.achievements.forEach(function(achievement){
+    achievement_map[achievement.id] = achievement
+  })
+  var updates = [
+    {id: "total_weight_loss", value: total_weight_loss},
+  ]
+  updates.forEach(function(u){
+    if(achievement_map[u.id]){
+      achievement_map[u.id].value=u.value
+    }else{
+      user.achievements.push(u)
+    }
+  })
+
+  await user.save()
+}
+
+function sorter(key){
+  return function(a, b){
+    if(a[key] == b[key]){
+      return 0;
+    }
+    if(a[key] < b[key]){
+      return -1;
+    }else{
+      return 1;
+    }
+  }
 }
 
 var model = mongoose.model('User', userSchema);

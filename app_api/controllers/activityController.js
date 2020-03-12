@@ -18,6 +18,7 @@ exports.insert = async function(req, res, next){
 
   activity = await Models.Activity.insert(activity)
   .then(function(activity){
+    Models.User.calculateTotalAchievements(req.user.email)
     return res.json({
       status: "success",
       message: "Activity inserted successfully",
@@ -25,6 +26,7 @@ exports.insert = async function(req, res, next){
     })
   })
   .catch(function(e){
+    console.log(e)
     return res.json({
       status: "error",
       message: e.message
@@ -50,6 +52,7 @@ exports.update = async function(req, res, next){
 
   Models.Activity.update(req.user._id, activityId, activityUpdate)
   .then(function(activity){
+    Models.User.calculateTotalAchievements(req.user.email)
     return res.json({
       status: "success",
       message: "Activity updated successfully",
