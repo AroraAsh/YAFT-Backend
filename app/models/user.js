@@ -90,7 +90,7 @@ const userSchema = new mongoose.Schema({
   }
   ],
   achievements: [{
-    id: {
+    type: {
       type: String
     },
     value: {
@@ -480,20 +480,20 @@ userSchema.statics.calculateTotalAchievements = async function(email){
 
   var achievement_map = {}
   user.achievements.forEach(function(achievement){
-    achievement_map[achievement.id] = achievement
+    achievement_map[achievement.type] = achievement
   })
   var updates = [
-    {id: "total_distance", value: distance/1000},
-    {id: "total_steps", value: steps},
-    {id: "total_running", value: run_distance/1000},
-    {id: "total_walking", value: walk_distance/1000},
-    {id: "total_biking", value: bike_distance/1000},
-    {id: "daily_distance", value: max_daily_distance/1000},
-    {id: "monthly_distance", value: max_monthly_distance/1000}
+    {type: "total_distance", value: distance/1000},
+    {type: "total_steps", value: steps},
+    {type: "total_running", value: run_distance/1000},
+    {type: "total_walking", value: walk_distance/1000},
+    {type: "total_biking", value: bike_distance/1000},
+    {type: "daily_distance", value: max_daily_distance/1000},
+    {type: "monthly_distance", value: max_monthly_distance/1000}
   ]
   updates.forEach(function(u){
-    if(achievement_map[u.id]){
-      achievement_map[u.id].value=u.value
+    if(achievement_map[u.type]){
+      achievement_map[u.type].value=u.value
     }else{
       user.achievements.push(u)
     }
@@ -520,14 +520,14 @@ userSchema.statics.calculateWeightAchievements = async function(email){
 
   var achievement_map = {}
   user.achievements.forEach(function(achievement){
-    achievement_map[achievement.id] = achievement
+    achievement_map[achievement.type] = achievement
   })
   var updates = [
-    {id: "total_weight_loss", value: total_weight_loss},
+    {type: "total_weight_loss", value: total_weight_loss},
   ]
   updates.forEach(function(u){
-    if(achievement_map[u.id]){
-      achievement_map[u.id].value=u.value
+    if(achievement_map[u.type]){
+      achievement_map[u.type].value=u.value
     }else{
       user.achievements.push(u)
     }
