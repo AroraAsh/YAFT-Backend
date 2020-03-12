@@ -271,7 +271,12 @@ exports.profile = async function(req, res){
 }
 
 exports.getAll = async function(req,res){
-  await Models.User.getAll()
+  var arr = [];
+  req.user.friendList.forEach(function(entry){
+    arr.push(entry.friendUserId.toString());
+  })
+  arr.push(req.user._id.toString());
+  await Models.User.getAll(arr)
   .then(function(users){
     return res.json({
       status: "success",

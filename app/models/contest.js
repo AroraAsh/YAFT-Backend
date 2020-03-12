@@ -99,7 +99,7 @@ contestSchema.statics.join = async function(contestId,user){
 
     var particip = {
         userID:user._id,
-        joinDate:Date.now
+        joinDate:Date.now()
     }
 
     contest.participant.push(particip);
