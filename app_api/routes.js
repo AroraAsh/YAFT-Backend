@@ -81,6 +81,9 @@ module.exports = function(app){
   app.route('/friends')
     .get([protectedURL, friendController.getFriends])
 
+  app.route('/friends/activity')
+    .post([protectedURL,friendController.getFriendActivity])
+
   app.route('/contest')
     .get([protectedURL,contestController.getContests])
 

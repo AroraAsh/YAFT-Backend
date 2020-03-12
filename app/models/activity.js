@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ActivityType = require('./activityType.js');
+const User = require('./user.js');
 
 const activitySchema = new mongoose.Schema({
     name:{
@@ -127,6 +128,21 @@ activitySchema.statics.getById = async function(activityId, userID){
     })
 }
 
+activitySchema.statics.getFriendActivity = async function(friendEmailId){
+    console.log(friendEmailId);
+    var user = await User.find({email:friendEmailId},'name email gender stepGoal');
+    console.log(user);
+    var activities = await this.find({
+        userID:user._id
+    })
+    var userInfo = user[0];
+    var ret = {
+        userInfo,
+        activities
+    }
+    console.log(ret);
+    return ret;
+}
 
 const Activity = mongoose.model('Activity',activitySchema)
 module.exports = Activity

@@ -75,3 +75,18 @@ exports.getFriends = async function(req,res,next){
       })
     })
 }
+
+exports.getFriendActivity = async function(req,res){
+  await Models.Activity.getFriendActivity(req.body.email).then(function(userInfo){
+    return res.json({
+      status: "success",
+      message: "Activities and User Profile retreived",
+      userInfo
+    })
+  }).catch(function(e){
+    return res.json({
+      status: "error",
+      message: e.message
+    })
+  })
+}

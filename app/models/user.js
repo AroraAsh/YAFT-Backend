@@ -334,8 +334,6 @@ userSchema.statics.rejectRequest = async function (requestFromId, requestToEmail
 
 
 
-
-
 userSchema.statics.getFriends = async function (userId){
  
 return await this.find({email: userId},'name email friendList')
