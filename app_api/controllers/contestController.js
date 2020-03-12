@@ -21,7 +21,7 @@ exports.getContests = async function(req,res){
 
 exports.makeContest = async function (req,res){
     var participantOne = {
-        userId: req.user._id,
+        userID: req.user._id,
         joinDate: Date.now()
     }
 

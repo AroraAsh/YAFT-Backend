@@ -59,14 +59,35 @@ const contestSchema = new mongoose.Schema({
           coordinates: {
             type: [Number]
           }
+    },
+    isEnded:{
+        type:Boolean,
+        default:false
+    },
+    winner:{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
     
 });
 
 contestSchema.statics.get = async function(user){
-    return await this.find({})
+    var contests =  await this.find({})
     .populate('creatorID','name email location')
     .populate('participant.userID','name email location')
+    .populate('winner','name email');
+    contests = contests.filter(entry => {
+        if(entry.contestType=='PUBLIC'||entry.creatorID.equals(user._id))
+            return true;
+        else if(entry.contestType=='PRIVATE'){
+            for (friend of user.friendList){
+                if(friend.friendUserId.equals(entry.creatorID))
+                    return true;
+            }
+            return false;
+        }
+    })
+    return contests;
 }
 
 
@@ -85,6 +106,7 @@ contestSchema.statics.insert = async function(contestAtt){
     contest.contestType = contestAtt.contestType;
     contest.contestGoalType = contestAtt.contestGoalType;
     contest.contestGoalValue = contestAtt.contestGoalValue;
+    contest.participant = contestAtt.participant
     contest.locationStart.coordinates = contestAtt.locationStart;
     contest.locationEnd.coordinates = contestAtt.locationEnd;
 
