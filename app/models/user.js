@@ -266,6 +266,7 @@ userSchema.statics.friendRequest = async function (requestFromEmail, requestToEm
   }
   user.friendList.push({ friendUserId: user._id, requestStatus: FriendRequestStatus.Pending });
   userRequest.friendList.push({ friendUserId: user._id, requestStatus: FriendRequestStatus.Requested });
+  await user.save();
   return await userRequest.save();
 }
 
@@ -294,10 +295,10 @@ userSchema.statics.confirmRequest = async function (requestFromEmail, requestToE
   
     userRequestFrom.friendList[indexOfUserRequestFrom].requestStatus = FriendRequestStatus.Accepted
     userConfirmingRequest.friendList[index].requestStatus = FriendRequestStatus.Accepted;
-    await userConfirming.validate();
+    await userConfirmingRequest.validate();
     await userRequestFrom.validate();
     await userRequestFrom.save();
-    return userConfirming.save();
+    return userConfirmingRequest.save();
 }
 
 userSchema.statics.rejectRequest = async function (requestFromId, requestToEmail) {
