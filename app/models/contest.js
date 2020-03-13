@@ -77,11 +77,14 @@ contestSchema.statics.get = async function(user){
     .populate('participant.userID','name email location')
     .populate('winner','name email');
     contests = contests.filter(entry => {
+        console.log(entry);
         if(entry.contestType=='PUBLIC'||entry.creatorID.equals(user._id))
             return true;
         else if(entry.contestType=='PRIVATE'){
+            
             for (friend of user.friendList){
-                if(friend.friendUserId.equals(entry.creatorID))
+                console.log(friend);
+                if(entry.creatorID.equals(friend.friendUserId))
                     return true;
             }
             return false;
